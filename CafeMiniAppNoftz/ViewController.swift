@@ -19,21 +19,34 @@ class ViewController: UIViewController {
     // Total price of cart
     var totalPrice = 0.00
     
+    
     @IBOutlet weak var menuTextView: UITextView!
-    
-    @IBOutlet weak var orderingInputTextField: UITextField!
-    
-    @IBOutlet weak var foodNameInput: UITextField!
-    
-    @IBOutlet weak var foodQuantityInput: UITextField!
-    
-    @IBOutlet weak var orderingSubmitButton: UIButton!
     
     @IBOutlet weak var yourCartTextView: UITextView!
     
+    @IBOutlet weak var totalCartPriceTextView: UITextView!
+    
+    @IBOutlet weak var foodQuantityInput: UITextField!
+    
+    @IBOutlet weak var foodNameInput: UITextField!
+    
     @IBOutlet weak var errorLabel: UILabel!
     
-    @IBOutlet weak var totalCartPriceTextView: UITextView!
+    @IBOutlet weak var adminPasswordTextField: UITextField!
+    
+    @IBOutlet weak var adminErrorLabel: UILabel!
+    
+    @IBOutlet weak var newItemTextField: UITextField!
+    
+    @IBOutlet weak var newPriceTextField: UITextField!
+    
+    @IBOutlet weak var addToMenuButton: UIButton!
+    
+    @IBOutlet weak var addToCartButton: UIButton!
+    
+    @IBOutlet weak var adminPasswordButton: UIButton!
+    
+    @IBOutlet weak var deleteFromMenuButton: UIButton!
     
     
     
@@ -48,8 +61,7 @@ class ViewController: UIViewController {
     }
     
     
-    @IBAction func orderingSubmitAction(_ sender: UIButton) {
-        
+    @IBAction func addToCartAction(_ sender: UIButton) {
         errorLabel.text = ""
         
         // "" is automatically put into order when text field is empty
@@ -78,7 +90,7 @@ class ViewController: UIViewController {
                 }
                 if go == true {
                     var index = 0
-                    yourCartTextView.text += "\n         \(num)                     \(foodName)"
+                    yourCartTextView.text += "\n\(foodName)(\(num))"
                     for i in 0..<food.count {
                         if food[i] == foodName {
                             index = i
@@ -111,12 +123,101 @@ class ViewController: UIViewController {
         // Gets rid of keyboard
         foodQuantityInput.resignFirstResponder()
         foodNameInput.resignFirstResponder()
+    }
+    
+    
+    
+    @IBAction func adminPasswordAction(_ sender: UIButton) {
+        adminErrorLabel.text = ""
+        if(adminPasswordTextField.text == "IhatePickles") {
+            newItemTextField.isHidden = false
+            newPriceTextField.isHidden = false
+            addToMenuButton.isHidden = false
+            deleteFromMenuButton.isHidden = false
+        } else {
+            adminErrorLabel.text = "Incorrect Password!"
+        }
         
+        adminPasswordTextField.text = ""
+        adminPasswordTextField.resignFirstResponder()
+        
+    }
+    
+    
+    @IBAction func addToMenuAction(_ sender: UIButton) {
+        var newItem = newItemTextField.text!
+        var newPrice = newPriceTextField.text!
+        
+        if newItem == "" {
+            adminErrorLabel.text = "Enter a new menu item!"
+        } else if newPrice == "" {
+            adminErrorLabel.text = "Enter the item's price!"
+        } else {
+            if let price = Double(newPrice) {
+                menuTextView.text += "\n\(newItem): $\(newPrice)"
+                food.append(newItem)
+                prices.append(Double(newPrice)!)
+                adminErrorLabel.text = "Item added to menu!"
+            } else {
+                adminErrorLabel.text = "Enter a valid price!"
+            }
+        }
+                
+        newItemTextField.text = ""
+        newPriceTextField.text = ""
+
+    }
+    
+    
+    @IBAction func deleteFromMenuAction(_ sender: UIButton) {
+        
+        var item = newItemTextField.text!
+        var price = newPriceTextField.text!
+        
+        var inMenu = false
+        
+        if item == "" {
+            adminErrorLabel.text = "Enter an item!"
+        } else if price == "" {
+            adminErrorLabel.text = "Enter the item's price!"
+        } else {
+            if let thisPrice = Double(price) {
+                var indexOfItem = -1
+                for i in 0..<food.count{
+                    if food[i] == item {
+                        indexOfItem = i
+                    }
+                }
+                if indexOfItem == -1 {
+                    adminErrorLabel.text = "This item is not on the menu!"
+                } else {
+                    food.remove(at: indexOfItem)
+                    prices.remove(at: indexOfItem)
+                    menuTextView.text = "MENU"
+                    for i in 0..<food.count{
+                        menuTextView.text += "\n\(food[i]) : $\(prices[i])"
+                    }
+                    adminErrorLabel.text = "Item removed from menu!"
+                }
+            } else {
+                adminErrorLabel.text = "Enter a valid price!"
+            }
+        }
+        
+        newItemTextField.text = ""
+        newPriceTextField.text = ""
+        newItemTextField.resignFirstResponder()
+        newPriceTextField.resignFirstResponder()
+        
+
+    
         
     }
     
     
 
+    
+    
 
 }
 
